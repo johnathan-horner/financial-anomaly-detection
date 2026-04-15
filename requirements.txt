@@ -1,20 +1,17 @@
-# Streamlit Financial Anomaly Detection Demo
-streamlit>=1.28.0
-requests>=2.31.0
-plotly>=5.17.0
-pandas>=2.0.0
-numpy
-python-dateutil>=2.8.2
-matplotlib
-seaborn
-
-# ML Libraries - let pip find compatible versions
-torch
-scikit-learn
-
-# Essential AI libraries
-langchain
-boto3
-
-# Data utilities
-faker
+streamlit==1.28.0
+requests==2.31.0
+plotly==5.17.0
+pandas==2.0.3
+numpy==1.24.4
+python-dateutil==2.8.2
+matplotlib==3.7.2
+seaborn==0.12.2
+torch==2.1.0
+scikit-learn==1.3.0
+langchain==0.1.0
+langgraph==0.0.40
+langchain-aws==0.1.0
+boto3==1.34.0
+botocore==1.34.0
+faker==20.1.0
+pydantic==2.5.0
