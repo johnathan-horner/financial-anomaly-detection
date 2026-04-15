@@ -158,7 +158,7 @@ def render_sidebar():
         # Architecture Diagram
         try:
             st.image("docs/Transaction_Anomaly_Detection_AWS_Architecture.png",
-                    caption="AWS Architecture Overview", use_column_width=True)
+                    caption="AWS Architecture Overview", width=None)
         except:
             st.info("Architecture diagram not found")
 
