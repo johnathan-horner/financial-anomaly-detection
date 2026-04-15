@@ -3,18 +3,18 @@ streamlit>=1.28.0
 requests>=2.31.0
 plotly>=5.17.0
 pandas>=2.0.0
-numpy>=1.24.0
+numpy
 python-dateutil>=2.8.2
-matplotlib>=3.7.0,<3.9.0
-seaborn>=0.12.0,<0.14.0
+matplotlib
+seaborn
 
-# Core ML - conservative versions for Streamlit Cloud
-torch>=2.0.0,<2.2.0
-scikit-learn>=1.3.0,<1.4.0
+# ML Libraries - let pip find compatible versions
+torch
+scikit-learn
 
-# Essential AI libraries only
-langchain>=0.1.0,<0.2.0
-boto3>=1.34.0
+# Essential AI libraries
+langchain
+boto3
 
 # Data utilities
-faker>=20.1.0
+faker
