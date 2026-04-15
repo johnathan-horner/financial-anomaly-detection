@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# CDK
+cdk.out/
+*.js
+*.d.ts
+node_modules/
+
+# Model artifacts
+model/artifacts/
+*.pth
+*.pkl
+*.joblib
+
+# Data
+data/generated/
+data/raw/
+*.csv
+*.parquet
+
+# Logs
+logs/
+*.log
+
+# AWS
+.aws/
+
+# Docker
+.dockerignore
