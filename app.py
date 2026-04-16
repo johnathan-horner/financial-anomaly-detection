@@ -156,21 +156,18 @@ def render_sidebar():
             """)
 
         # Architecture Diagram
-        try:
-            st.image("docs/Transaction_Anomaly_Detection_AWS_Architecture.png",
-                    caption="AWS Architecture Overview", width=None)
-        except:
-            st.info("Architecture diagram not found")
+        st.image("docs/Transaction_Anomaly_Detection_AWS_Architecture.png",
+                caption="AWS Architecture Overview", use_container_width=True)
 
         # Tech Stack
         st.markdown("**Tech Stack:**")
         col1, col2 = st.columns(2)
         with col1:
-            st.image("https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white", width=80)
-            st.image("https://img.shields.io/badge/LangChain-2E7D32?style=flat&logo=chainlink&logoColor=white", width=80)
+            st.image("https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white", use_container_width=True)
+            st.image("https://img.shields.io/badge/LangChain-2E7D32?style=flat&logo=chainlink&logoColor=white", use_container_width=True)
         with col2:
-            st.image("https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazon-aws&logoColor=white", width=80)
-            st.image("https://img.shields.io/badge/Bedrock-FF9900?style=flat&logo=amazon-aws&logoColor=white", width=80)
+            st.image("https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazon-aws&logoColor=white", use_container_width=True)
+            st.image("https://img.shields.io/badge/Bedrock-FF9900?style=flat&logo=amazon-aws&logoColor=white", use_container_width=True)
 
         # Pipeline Architecture
         with st.expander("🔄 Pipeline Architecture"):
