@@ -1,5 +1,7 @@
 # Real-Time Financial Transaction Anomaly Detection System
 
+![CI](https://github.com/johnathan-horner/financial-anomaly-detection/actions/workflows/ci.yml/badge.svg)
+
 A production-grade, cloud-native AI system for detecting financial transaction anomalies using PyTorch, LangGraph + LangChain for agentic investigation orchestration, and Amazon Bedrock for LLM inference.
 
 ## Architecture
@@ -430,6 +432,52 @@ aws sagemaker delete-endpoint --endpoint-name financial-anomaly-detector
 - **Synthetic fraud generation**: Adversarial training data creation
 - **Real-time dashboard**: Live fraud detection monitoring
 - **Analyst feedback loop**: Continuous learning from human decisions
+
+## Architecture Decisions
+
+See [docs/decisions/](docs/decisions/) for architecture decision records explaining why each service and pattern was chosen.
+
+## Model Documentation
+
+See [MODEL_CARD.md](MODEL_CARD.md) for detailed model specifications, performance metrics, and compliance information.
+
+## API Documentation
+
+Run the FastAPI server with `uvicorn api:app --reload` and visit `/docs` for interactive Swagger documentation.
+
+## 🔌 MCP Server Integration
+
+The Financial Anomaly Detection System includes a Model Context Protocol (MCP) server that exposes fraud detection functionality through a standardized interface for AI assistant integration.
+
+### Available Tools
+
+- `detect_transaction_anomaly()` - Analyze transactions for anomalous patterns
+- `investigate_customer_pattern()` - Investigate customer historical behavior
+- `analyze_merchant_risk()` - Assess merchant fraud risk profiles
+- `get_investigation_queue()` - Check current investigation workload
+- `generate_fraud_alert()` - Create alerts for high-risk transactions
+- `get_system_metrics()` - Retrieve performance and operational metrics
+
+### Available Resources
+
+- `model://autoencoder` - PyTorch autoencoder model information
+- `data://risk_thresholds` - Risk scoring and routing configuration
+
+### Available Prompts
+
+- `fraud_investigation` - Complete fraud investigation workflow
+- `batch_analysis` - Batch transaction analysis for patterns and trends
+
+Run with: `python mcp_server.py`
+
+## CI/CD Pipeline
+
+GitHub Actions automatically runs on push/PR to main:
+- Python 3.11 setup and dependency installation
+- Code linting with flake8 (max line length 120)
+- Import testing for core modules
+
+See [.github/workflows/ci.yml](.github/workflows/ci.yml) for full pipeline configuration.
 
 ---
 

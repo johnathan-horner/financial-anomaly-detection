@@ -1,7 +1,13 @@
+# Data Processing
+pydantic>=2.5.0
+python-dateutil>=2.8.2
+
+# API/Web
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+# MCP Server
+fastmcp>=0.1.0
+
+# Development
 streamlit>=1.28.0
-requests>=2.25.0
-plotly>=5.0.0
-pandas>=1.3.0
-numpy>=1.21.0
-python-dateutil>=2.8.0
-Pillow>=8.0.0
