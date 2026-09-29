@@ -170,34 +170,27 @@ class InvestigationSummaryAgent:
 ## 📊 Performance Metrics & Thresholds
 
 ### Model Performance (Validation Set)
-- **Precision**: 0.85 (85% of flagged transactions are actual fraud)
-- **Recall**: 0.79 (catches 79% of actual fraud)
-- **F1-Score**: 0.82
-- **False Positive Rate**: 0.015 (1.5%)
-- **AUC-ROC**: 0.91
+Evaluation metrics will be published here once measured on a held-out split.
 
 ### Threshold Calibration
-- **Auto-Approve Threshold**: 0.3 (reconstruction error)
+- **Auto-Approve Threshold**: 0.3 (anomaly score)
 - **Alert Threshold**: 0.7 (immediate block)
 - **Calibration Method**: Precision-recall curve analysis
 - **Target FPR**: <1% (business requirement)
 
 ### Investigation Performance
-- **Average Investigation Time**: 45 seconds
-- **Auto-Resolution Rate**: 60% (clear false positives)
-- **Human Review Rate**: 35% (mixed signals)
-- **Immediate Block Rate**: 5% (clear fraud)
+Evaluation metrics will be published here once measured on a held-out split.
 
 ## 🏛️ Design Decisions & Rationale
 
 ### Why Kinesis over SQS for Ingestion?
-- **Real-time processing**: Sub-second latency requirements
-- **Throughput**: Handle 100K+ transactions/day with burst capacity
+- **Real-time processing**: Low-latency streaming ingestion
+- **Throughput**: 2 provisioned shards (`shard_count=2` in CDK), scalable for burst capacity
 - **Replay capability**: 24-hour retention for error recovery
 - **Partitioning**: Distribute load across Lambda instances
 
 ### Why ECS Fargate over Lambda for Agents?
-- **Long-running workflows**: LangGraph investigations can take 2-5 minutes
+- **Long-running workflows**: LangGraph investigations chain multiple LLM calls
 - **Memory requirements**: LangChain + Bedrock clients need 2GB+ RAM
 - **State management**: Complex investigation state across multiple LLM calls
 - **Cost efficiency**: More economical for sustained processing
@@ -211,7 +204,7 @@ class InvestigationSummaryAgent:
 ### Threshold Selection Rationale
 The 0.3 auto-approve threshold was selected through:
 1. **Business impact analysis**: Cost of false positives vs. fraud losses
-2. **ROC curve optimization**: Maximize true positive rate at 1.5% FPR
+2. **ROC curve optimization**: Maximize true positive rate at 1% FPR
 3. **Operational constraints**: Human review capacity limits
 4. **Regulatory requirements**: Audit trail and explainability needs
 
@@ -241,30 +234,6 @@ The 0.3 auto-approve threshold was selected through:
 - **Change management**: CDK infrastructure-as-code
 - **Access controls**: IAM roles and KMS encryption
 
-## 💰 Cost Analysis
-
-### 10K Transactions/Day
-| Service | Usage | Monthly Cost |
-|---------|-------|--------------|
-| Kinesis Data Stream | 2 shards, 10K records/day | $45 |
-| Lambda (Scoring) | 300K invocations, 512MB | $15 |
-| SageMaker Endpoint | ml.t2.medium, 24/7 | $35 |
-| ECS Fargate | 1 task, 1 vCPU, 2GB RAM | $25 |
-| DynamoDB | 1M reads, 300K writes | $30 |
-| Bedrock Claude 3 | 1K investigations, 50K tokens avg | $50 |
-| **Total** | | **$200/month** |
-
-### 100K Transactions/Day
-| Service | Usage | Monthly Cost |
-|---------|-------|--------------|
-| Kinesis Data Stream | 4 shards, 100K records/day | $90 |
-| Lambda (Scoring) | 3M invocations, 1024MB | $120 |
-| SageMaker Endpoint | ml.m5.large, 24/7 | $95 |
-| ECS Fargate | 3 tasks avg, 1 vCPU, 2GB RAM | $75 |
-| DynamoDB | 10M reads, 3M writes | $250 |
-| Bedrock Claude 3 | 3K investigations, 50K tokens avg | $150 |
-| **Total** | | **$780/month** |
-
 ## 🚦 Deployment Instructions
 
 ### Prerequisites
@@ -290,7 +259,8 @@ pip install -r requirements.txt
 
 ### 2. Generate Synthetic Data
 ```bash
-# Generate 100K normal + 2K anomalous transactions
+# Generate 100K normal transactions + 2K injected anomaly events
+# (velocity spikes expand to 3-6 rows each: 3,387 anomalous rows with seed 42)
 python data/synthetic_generator.py
 
 # Verify data generation

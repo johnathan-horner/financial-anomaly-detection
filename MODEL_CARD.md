@@ -13,17 +13,12 @@
 - Out of scope: Not intended for credit scoring or investment decisions. Human review required for high-risk transactions
 
 ## Training Data
-- Base: 2.5M historical transactions from 2022-2023
+- Base: Synthetic transactions from `data/synthetic_generator.py` (seed 42): 100,000 normal transactions across 1,000 customers over a 90-day window, plus 3,387 injected anomalous rows (103,387 total)
 - Features: Transaction amount, merchant category, location risk, customer patterns, temporal features
-- Classes: Normal transactions vs. anomalous patterns (0.8% fraud positive rate)
+- Classes: Normal transactions vs. anomalous patterns (3.3% anomaly rate in generated data)
 
 ## Evaluation Metrics
-- Accuracy: 94.2%
-- Precision: 91.8%
-- Recall: 89.5%
-- F1 Score: 90.6%
-- AUC-ROC: 0.967
-- False Positive Rate: 2.1%
+Evaluation metrics will be published here once measured on a held-out split.
 
 ## Risk Scoring Thresholds
 - Low Risk (<0.3): Auto-approve, no human review
