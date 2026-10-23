@@ -77,6 +77,10 @@ def test_mcp_tools(tmp_path, monkeypatch):
                 "customer_id": cust, "amount": prof["median_amount"] * 30, "merchant_category": "jewelry",
                 "country": "RU", "lat": 55.76, "lon": 37.62})).data
             assert risky["lane"] != "clear" and risky["reasons"]
+            again = (await client.call_tool("detect_transaction_anomaly", {
+                "customer_id": cust, "amount": prof["median_amount"] * 30, "merchant_category": "jewelry",
+                "country": "RU", "lat": 55.76, "lon": 37.62})).data
+            assert again["score"] == risky["score"] and again["reasons"] == risky["reasons"]
             stats = (await client.call_tool("analyze_merchant_risk", {"merchant_category": "grocery"})).data
             assert stats["transactions"] > 0
             metrics = (await client.call_tool("get_system_metrics", {})).data

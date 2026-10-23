@@ -1,6 +1,7 @@
 """FastMCP server for the anomaly detector.
 
-Every tool calls the real detector and audit log in the `anomaly` package; nothing is simulated.
+Every tool calls the real detector and audit log in the `anomaly` package; nothing is simulated and no
+language model is called. Scoring is deterministic: the same request returns the same score.
 Run with:  python mcp_server.py        (stdio transport)
 """
 
@@ -29,9 +30,10 @@ def detect_transaction_anomaly(customer_id: str, amount: float, merchant_categor
     """Score a new card transaction for a known customer.
 
     Returns a score from 0 to 1, a lane (clear, review_queue or hold) and plain-language reasons.
-    Location defaults to the customer's home. The result is written to the audit log.
+    Location defaults to the customer's home. Scoring does not change the customer's history, so the
+    same request always gets the same score. Each call is written to the audit log.
     """
-    return service().score_transaction(customer_id, amount, merchant_category, country, lat, lon)
+    return service().score_transaction(customer_id, amount, merchant_category, country, lat, lon, remember=False)
 
 
 @mcp.tool

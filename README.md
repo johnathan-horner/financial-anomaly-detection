@@ -129,6 +129,10 @@ Tools: `detect_transaction_anomaly`, `investigate_customer_pattern`, `analyze_me
 `get_investigation_queue`, `record_analyst_decision`, `get_system_metrics`. Resources:
 `model://detector`, `data://risk_thresholds`. Prompt: `fraud_investigation`.
 
+No language model is called. Scoring through MCP does not change customer history, so the same
+request returns the same score. Two tools write: every `detect_transaction_anomaly` call is added
+to the audit log, and `record_analyst_decision` records the analyst's decision.
+
 Regenerate the data and retrain (about 2 minutes for data and 1 minute for training on a 2-core laptop):
 
 ```bash

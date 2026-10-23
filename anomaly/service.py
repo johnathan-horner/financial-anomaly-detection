@@ -36,8 +36,12 @@ class FraudService:
 
     def score_transaction(self, customer_id: str, amount: float, merchant_category: str, country: str = "US",
                           lat: float | None = None, lon: float | None = None,
-                          timestamp: datetime | str | None = None) -> dict:
-        """Score one new transaction, add it to the customer's history and write it to the audit log."""
+                          timestamp: datetime | str | None = None, remember: bool = True) -> dict:
+        """Score one new transaction and write it to the audit log.
+
+        With remember=True (the app) the transaction joins the customer's history, so later scores see it.
+        With remember=False (the MCP server) history is unchanged, so the same request gets the same score.
+        """
         if customer_id not in self.homes.index:
             raise KeyError(f"unknown customer {customer_id}")
         if amount <= 0:
@@ -59,7 +63,8 @@ class FraudService:
         feats = build_features(pd.concat([past[HISTORY_COLUMNS], pd.DataFrame([row])], ignore_index=True))
         new = feats[feats["transaction_id"] == row["transaction_id"]]
         decision = self.detector.decide(new)[0]
-        self.history = pd.concat([self.history, pd.DataFrame([row])], ignore_index=True)
+        if remember:
+            self.history = pd.concat([self.history, pd.DataFrame([row])], ignore_index=True)
         self.audit.record_score(row["transaction_id"], customer_id, self.detector.version, row["amount"],
                                 decision.score, decision.lane, decision.reasons)
         return {"transaction_id": row["transaction_id"], "customer_id": customer_id, "amount": row["amount"],
