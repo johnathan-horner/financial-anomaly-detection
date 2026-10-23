@@ -193,11 +193,6 @@ ruff and scans the git history with gitleaks.
 - Drift monitoring on the score distribution.
 - A hosted demo.
 
-## Repository notes
-
-`legacy/` holds the earlier prototype (FastAPI service, CDK stacks, Lambda and ECS code, LangGraph
-agents, and an MCP server that returned random numbers). None of it is used by the current code. It
-is kept until a decision is made to remove it.
 
 ## License
 
