@@ -1,7 +1,8 @@
 """FastMCP server for the anomaly detector.
 
 Every tool calls the real detector and audit log in the `anomaly` package; nothing is simulated and no
-language model is called. Scoring is deterministic: the same request returns the same score.
+language model is called. All six tools are read-only and deterministic: the same request returns the
+same answer. Scores and analyst decisions are written to the audit log by the Streamlit app, not here.
 Run with:  python mcp_server.py        (stdio transport)
 """
 
@@ -30,10 +31,11 @@ def detect_transaction_anomaly(customer_id: str, amount: float, merchant_categor
     """Score a new card transaction for a known customer.
 
     Returns a score from 0 to 1, a lane (clear, review_queue or hold) and plain-language reasons.
-    Location defaults to the customer's home. Scoring does not change the customer's history, so the
-    same request always gets the same score. Each call is written to the audit log.
+    Location defaults to the customer's home. Read-only: the customer's history and the audit log are not
+    changed, so the same request always gets the same score.
     """
-    return service().score_transaction(customer_id, amount, merchant_category, country, lat, lon, remember=False)
+    return service().score_transaction(customer_id, amount, merchant_category, country, lat, lon,
+                                       remember=False, log=False)
 
 
 @mcp.tool
@@ -55,9 +57,9 @@ def get_investigation_queue() -> list[dict]:
 
 
 @mcp.tool
-def record_analyst_decision(transaction_id: str, reviewer: str, action: str, note: str = "") -> dict:
-    """Record an analyst's decision on a flagged transaction. action is confirmed_fraud or marked_legit."""
-    return service().record_review(transaction_id, reviewer, action, note)
+def get_audit_trail(transaction_id: str) -> list[dict]:
+    """Every audit event for a transaction (scores and analyst decisions recorded in the app), oldest first."""
+    return service().audit_trail(transaction_id)
 
 
 @mcp.tool
@@ -87,7 +89,7 @@ def fraud_investigation_prompt(transaction_id: str) -> str:
         f"Review flagged transaction {transaction_id}. Use get_investigation_queue to read its score and "
         "reasons, then investigate_customer_pattern for the customer's usual behavior. Decide whether the "
         "reasons are explained by normal behavior (travel, a planned large purchase) or not, and record the "
-        "outcome with record_analyst_decision. The data is synthetic."
+        "outcome in the review queue of the Streamlit app, which writes it to the audit log. The data is synthetic."
     )
 
 

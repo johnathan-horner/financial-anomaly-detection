@@ -36,11 +36,13 @@ class FraudService:
 
     def score_transaction(self, customer_id: str, amount: float, merchant_category: str, country: str = "US",
                           lat: float | None = None, lon: float | None = None,
-                          timestamp: datetime | str | None = None, remember: bool = True) -> dict:
-        """Score one new transaction and write it to the audit log.
+                          timestamp: datetime | str | None = None, remember: bool = True,
+                          log: bool = True) -> dict:
+        """Score one new transaction.
 
-        With remember=True (the app) the transaction joins the customer's history, so later scores see it.
-        With remember=False (the MCP server) history is unchanged, so the same request gets the same score.
+        The app uses the defaults: the transaction joins the customer's history (remember) and is written
+        to the audit log (log). The MCP server passes remember=False and log=False, so scoring there is
+        read-only and the same request always gets the same score.
         """
         if customer_id not in self.homes.index:
             raise KeyError(f"unknown customer {customer_id}")
@@ -65,8 +67,9 @@ class FraudService:
         decision = self.detector.decide(new)[0]
         if remember:
             self.history = pd.concat([self.history, pd.DataFrame([row])], ignore_index=True)
-        self.audit.record_score(row["transaction_id"], customer_id, self.detector.version, row["amount"],
-                                decision.score, decision.lane, decision.reasons)
+        if log:
+            self.audit.record_score(row["transaction_id"], customer_id, self.detector.version, row["amount"],
+                                    decision.score, decision.lane, decision.reasons)
         return {"transaction_id": row["transaction_id"], "customer_id": customer_id, "amount": row["amount"],
                 "merchant_category": merchant_category, "country": country, "timestamp": ts.isoformat(),
                 "model_version": self.detector.version, **asdict(decision)}
@@ -94,6 +97,12 @@ class FraudService:
         if "is_anomaly" in h and h["is_anomaly"].notna().any():
             out["labeled_anomaly_rate"] = round(float(h["is_anomaly"].mean()), 4)
         return out
+
+    def audit_trail(self, transaction_id: str) -> list[dict]:
+        events = self.audit.events(transaction_id)
+        if not events:
+            raise KeyError(f"no audit events for {transaction_id}")
+        return events
 
     def review_queue(self) -> list[dict]:
         return self.audit.review_queue()

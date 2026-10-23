@@ -69,7 +69,7 @@ def test_mcp_tools(tmp_path, monkeypatch):
         async with Client(mcp_server.mcp) as client:
             names = {t.name for t in await client.list_tools()}
             assert names == {"detect_transaction_anomaly", "investigate_customer_pattern", "analyze_merchant_risk",
-                             "get_investigation_queue", "record_analyst_decision", "get_system_metrics"}
+                             "get_investigation_queue", "get_audit_trail", "get_system_metrics"}
             cust = mcp_server.service().customers()[3]
             prof = (await client.call_tool("investigate_customer_pattern", {"customer_id": cust})).data
             assert prof["transactions"] > 0
@@ -85,11 +85,14 @@ def test_mcp_tools(tmp_path, monkeypatch):
             assert stats["transactions"] > 0
             metrics = (await client.call_tool("get_system_metrics", {})).data
             assert "combined" in metrics["test"]
+            # Read-only: scoring through MCP writes nothing to the audit log.
+            assert mcp_server.service().audit.events() == []
             queue = (await client.call_tool("get_investigation_queue", {})).data
-            if queue:
-                done = (await client.call_tool("record_analyst_decision", {
-                    "transaction_id": queue[0]["transaction_id"], "reviewer": "t", "action": "marked_legit"})).data
-                assert done["reviewer_action"] == "marked_legit"
+            assert queue == []
+            svc = mcp_server.service()
+            logged = svc.score_transaction(cust, prof["median_amount"] * 30, "jewelry", "RU", 55.76, 37.62)
+            trail = (await client.call_tool("get_audit_trail", {"transaction_id": logged["transaction_id"]})).data
+            assert [e["event_type"] for e in trail] == ["scored"]
     asyncio.run(run())
     mcp_server.service.cache_clear()
 
