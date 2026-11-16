@@ -2,8 +2,9 @@
 
 ![CI](https://github.com/johnathan-horner/financial-anomaly-detection/actions/workflows/ci.yml/badge.svg)
 
-**Status: In progress.** The detector, review queue, audit log, Streamlit app and MCP server all run
-locally today. There is no hosted demo.
+**Status: Live.** Demo: https://financial-anomaly-detection.streamlit.app (checked 2026-11-16; the
+free Streamlit host puts it to sleep when idle and it wakes on the first visit). The detector, review
+queue, audit log, Streamlit app and MCP server also run locally; the MCP server is not hosted.
 
 Independent reference project by Shoot It Analytics LLC. Built with public or synthetic data.
 
@@ -191,7 +192,6 @@ ruff and scans the git history with gitleaks.
 - Feed analyst decisions back as labels and measure the change.
 - Add merchant-level features (new merchant, merchant risk) to the generator and model.
 - Drift monitoring on the score distribution.
-- A hosted demo.
 
 
 ## License
