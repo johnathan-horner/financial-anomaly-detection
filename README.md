@@ -114,26 +114,7 @@ Built by Johnathan Horner, Shoot It Analytics LLC
 
 ## Architecture
 
-![Transaction Anomaly Detection: What runs today (no AWS at runtime)](docs/architecture/architecture.png)
-
-The Streamlit app builds past-only features from the customer's own history, runs the Isolation Forest and the five rules, and combines them into one calibrated score that routes the transaction to clear, review or hold. Scores and analyst decisions go to an append-only SQLite audit log. A read-only FastMCP server gives an AI assistant the same detector over stdio; it runs locally, is not hosted, and nothing here uses AWS.
-
-The diagrams are built with the Python `diagrams` library from [`docs/architecture/`](docs/architecture/). Each arrow is checked against the code and, for AWS calls, the AWS documentation; see [`docs/architecture/arrow-verification.md`](docs/architecture/arrow-verification.md). A 1200x1500 copy of each diagram (`*-linkedin.png`) is in the same folder.
-
-| Piece | File |
-|---|---|
-| Synthetic data generator | `anomaly/generate.py` |
-| Features (past-only) | `anomaly/features.py` |
-| Rules and their reasons | `anomaly/rules.py` |
-| Model, calibration, lanes, reasons | `anomaly/detector.py` |
-| Training and evaluation | `anomaly/train.py` -> `artifacts/metrics.json`, `artifacts/detector.joblib` |
-| Scoring service used by app and MCP | `anomaly/service.py` |
-| Audit log | `anomaly/audit.py` |
-| MCP server | `mcp_server.py` |
-| App | `app.py` |
-
-The trained detector and the last 30 days of synthetic history (`data/recent_history.csv.gz`,
-2.9 MB) are committed so the app and MCP server start without regenerating data.
+The architecture diagram and how it works are in the [Case study](#architecture) above.
 
 ## How to run
 
